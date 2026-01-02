@@ -22,6 +22,9 @@ const UserSchema = new mongoose.Schema({
     isverified : {
         type : Boolean,
         default : false,
+    },
+    OTP : {
+        type: String,
     }
 
 }, {timestamps : true,
@@ -29,5 +32,5 @@ const UserSchema = new mongoose.Schema({
 }
 );
 
-const User = mongoose.model(UserSchema);
+const User = mongoose.model('User', UserSchema);
 module.exports = User;
