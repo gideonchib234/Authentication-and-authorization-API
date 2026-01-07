@@ -1,5 +1,6 @@
 const User = require('../models/schema');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const registerUser = async (req, res) => {
     const { Firstname, Lastname, Email, Password } = req.body;
@@ -13,13 +14,15 @@ const registerUser = async (req, res) => {
         }
         
         const hashedPassword = await bcrypt.hash(Password, 10);
-        const OTP = Math.floor(100000 + Math.random() * 900000).toString();;
+        const OTP = Math.floor(100000 + Math.random() * 900000).toString();
+        const Otpexpiry = new Date(Date.now() + 10 * 60 * 1000);
         const newUser = new User({
             Firstname,
             Lastname,
             Email,
             Password : hashedPassword,
             OTP,
+            OtpExpiry : Otpexpiry
 
     })
     await newUser.save()
@@ -38,18 +41,20 @@ const LoginUser = async (req, res) => {
         if(!Email || !Password){
             return res.status(400).json({message : 'All fields are required'});
         }
-        const user = await User.findOne({Email});
+        const user = await User.findOne({Email});  
         if(!user){
-            return res.status(400).json({message : 'Invalid credentials'});
+            return res.status(404).json({message : 'User not found'});
         }   
-        if(!user.Isverified){
-            return res.status(400).json({message : 'Verify your email to login'})
+        if(!user.isverified){
+            return res.status(401).json({message : 'Verify your email to login'})
         }
         const isPasswordValid = await bcrypt.compare(Password, user.Password);
         if(!isPasswordValid){
-            return res.status(400).json({message : 'Invalid credentials'});
-        }   
-        return res.status(200).json({message : 'Login successful'});
+            return res.status(401).json({message : 'Invalid credentials'});
+        }  
+
+        const token = await jwt.sign ({userId : user._id, role: user.role}, process.env.JWT_SECRET, {expiresIn : '1d'});
+        return res.status(200).json({message : 'Login successful', token});
     }catch (error) {
         console.error('Error during user login:', error);
          return res.status(500).json({message: 'Internal Server error'});
@@ -82,7 +87,7 @@ const ResetPassword = async (req, res) => {
         if(!OTP, newpassword){
             return res.status(400).json({message : 'All fields are required'});
         }
-        const user = await User.findone({OTP});
+        const user = await User.findOne({OTP});
         if(!user){
             return res.status(400).json({message : 'Invalid OTP'});
         }
@@ -108,10 +113,15 @@ const OTPverification = async (req, res) => {
         if(!user){
             return res.status(400).json({message : 'Invalid OTP'});
         }
-        user.Isverified = true;
-        user.OTP = null;
-        await user.save();
-        return res.status(200).json({message : 'Email verified successfully'});
+         if(user.OtpExpiry < new Date()){
+                return res.status(400).json({message: 'Otp has expired'});
+            }else{
+                user.isverified = true;
+                user.OTP = null;
+                user.OtpExpiry = null;
+                await user.save();
+                return res.status(200).json({message: 'Email verified successfully'});
+            }
 
     }catch (error) {
         console.error('Error during OTP verification process:', error);   
@@ -126,16 +136,30 @@ const ResendOTP = async (req, res) => {
         }
         const user = await User.findOne({Email});
         if(!user){
-            return res.status(400).json({message : 'User not found'});
+            return res.status(404).json({message : 'User not found'});
         }
         const OTP = Math.floor(100000 + Math.random() * 900000).toString();
         user.OTP = OTP;
         await user.save();
-        return res.status(200).json({message : 'OTP resent successfully', OTP});    
+        return res.status(201).json({message : 'OTP resent successfully', OTP});    
     }catch (error) {
         console.error('Error during resending OTP process:', error);   
         return res.status(500).json({message: 'Internal Server error'});
     }
 }
+ const getAllUsers = async (req, res) => {
+    const {userId} = req.user;
+    try {
+        const adminUser = await User.findById(userId);
+        if(adminUser.role !== 'admin'){
+            return res.status(403).json({message: 'Access denied. Admins only'});
+        }
+        const users = await User.find().select('-Password -OTP -OtpExpiry');
+        return res.status(200).json({users});
+    }catch (error) {
+        console.error('Error fetching users:', error);   
+        return res.status(500).json({message: 'Internal Server error'});
+    }
 
+ }
 module.exports = { registerUser, LoginUser, ResetPassword, ForgetPassword, OTPverification, ResendOTP };
