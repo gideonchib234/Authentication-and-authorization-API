@@ -26,6 +26,13 @@ const registerUser = async (req, res) => {
 
     })
     await newUser.save()
+
+    await SendEmail(
+        Email, 
+        'Verify your email', 
+        `Your OTP is ${OTP}. 
+        It will expire in 10 minutes.`); 
+
     return res.status(201).json({message : 'User registered succesfully'});
     
 }catch (error) {
@@ -75,6 +82,12 @@ const ForgetPassword = async (req, res) => {
         const OTP = Math.floor(100000 + Math.random() * 900000).toString();
         user.OTP = OTP;
         await user.save();
+        await SendEmail(
+            Email,
+            'Password Reset OTP',
+            `Your OTP for password reset is ${OTP}.
+             It will expire in 10 minutes.`
+        );
         return res.status(200).json({message : 'OTP sent to your email', OTP});
     }catch (error) {
         console.error('Error during forget password process:', error);
