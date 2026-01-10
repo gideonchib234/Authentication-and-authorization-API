@@ -174,5 +174,5 @@ const ResendOTP = async (req, res) => {
         return res.status(500).json({message: 'Internal Server error'});
     }
 
- }
+ } 
 module.exports = { registerUser, LoginUser, ResetPassword, ForgetPassword, OTPverification, ResendOTP, getAllUsers};
