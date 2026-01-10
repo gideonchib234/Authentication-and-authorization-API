@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const ejs = require('ejs');
 
 const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
