@@ -175,4 +175,4 @@ const ResendOTP = async (req, res) => {
     }
 
  }
-module.exports = { registerUser, LoginUser, ResetPassword, ForgetPassword, OTPverification, ResendOTP };
+module.exports = { registerUser, LoginUser, ResetPassword, ForgetPassword, OTPverification, ResendOTP, getAllUsers};
