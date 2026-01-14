@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const DB_URI = process.env.DB_URI || 'mongodb+srv://<credentials>@cluster0.5kz6muf.mongodb.net/<Auth database>';
+const DB_URI = process.env.DB_URI || 'mongodb+srv://<credentials>@cluster0.5kz6muf.mongodb.net/Auth database';
 
 
 const connectDB = async () => {
