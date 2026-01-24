@@ -7,14 +7,26 @@ const walletSchema = new mongoose.Schema({
         required: true,
     },
     balance : {
-        type: Number,
+        type: mongoose.Schema.Types.Decimal128,
         default: 0,
     },
     currency : {
         type: String,
         required: true,
         default: 'NGN',
-    }
+    },
+    AccountNumber : {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    BankName : {
+        type: String,
+        required: true,
+    },
 },{ timestamps: true,
     versionKey: false
 })
+
+const Wallet = mongoose.model('Wallet', walletSchema);
+module.exports = Wallet;

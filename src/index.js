@@ -5,6 +5,7 @@ const morgan = require('morgan');
 require('dotenv').config();
 const connectDB = require('./database/db');
 const userRoutes = require('./Routes/route');
+const walletRoutes = require('./Routes/walletRoutes');
 
 connectDB();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.use('/api/users', userRoutes);
+app.use('/api/wallets', walletRoutes);
 
 
 app.listen(PORT, () => {
