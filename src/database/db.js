@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const DB_URI = process.env.DB_URI || 'mongodb+srv://gibsonchib124_db_user:lARuyGsqHHyp4s2s@authdatabase.eipdzxt.mongodb.net/';
+const DB_URI = process.env.DB_URI || 'mongodb+srv://gibsonchib124_db_user:lARuyGsqHHyp4s2s@authdatabase.eipdzxt.mongodb.net/Adatabaseuth';
 
 const connectDB = async () => {
-    try {
+       try {
         await mongoose.connect(DB_URI);
         console.log('Database connected successfully');
     } catch (error) {

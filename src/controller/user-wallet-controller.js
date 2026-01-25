@@ -14,8 +14,11 @@ const ExistingWallet = await Wallet.findOne({userId});
 if(!ExistingWallet){
     return res.status(400).json({message : 'Wallet already exists for this user'});
 
-}
-const normalizedPhoneNumber = PhoneNumber.replace(/^(\+234|0)/, '');
+};
+const normalizedPhoneNumber = PhoneNumber.replace(/^\(\+234|0)/, '');
+await ExistingWallet.PhoneNumber === PhoneNumber;
+await ExistingWallet.save();
+
 const newWallet = new Wallet({
     userId: userId,
     AccountNumber: normalizedPhoneNumber,
@@ -31,6 +34,16 @@ return res.status(201).json({message : 'Wallet created successfully', wallet: ne
 }
 };
 
+const getAllWallets = async (req, res) => {
+    try {
+        const wallets = await Wallet.find().populate('userId', 'Firstname Lastname Email PhoneNumber'); 
+        return res.status(200).json({wallets});
+    } catch (error) {
+        console.error('Error fetching wallets:', error);
+        return res.status(500).json({message: 'Internal Server Error'});
+    }
+}
 module.exports = {
     createWallet,
+    getAllWallets,
 };
