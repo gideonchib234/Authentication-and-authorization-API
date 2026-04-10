@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 4500;
 const morgan = require('morgan');
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
 const connectDB = require('./database/db');
 const userRoutes = require('./Routes/route');
 const walletRoutes = require('./Routes/walletRoutes');

@@ -15,7 +15,7 @@ if(!ExistingWallet){
     return res.status(400).json({message : 'Wallet already exists for this user'});
 
 };
-const normalizedPhoneNumber = PhoneNumber.replace(/^\(\+234|0)/, '');
+const normalizedPhoneNumber = PhoneNumber.replace(/^(\+234|0)/, '');
 await ExistingWallet.PhoneNumber === PhoneNumber;
 await ExistingWallet.save();
 

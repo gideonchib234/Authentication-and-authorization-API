@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-require('dotenv').config();
+require('dotenv').config({ path: '../../.env' });
 
-const DB_URI = process.env.DB_URI || 'mongodb+srv://gibsonchib124_db_user:lARuyGsqHHyp4s2s@authdatabase.eipdzxt.mongodb.net/Adatabaseuth';
+const DB_URI = process.env.DB_URI ;
 
 const connectDB = async () => {
        try {
